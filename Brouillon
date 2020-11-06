@@ -1,0 +1,28 @@
+Sujet : Baba is You
+
+noms : Baba, lava, skull, flag, wall, water, et rock
+opérateurs : is 
+propriétés : you, win, stop, push, melt, hot, sink et defeat.
+
+Modules :
+	- plateau de jeu.
+	- décor
+	- Personnage
+	- Console
+	- sauvegarde
+
+Objets:
+	- blocs
+	- mots (noms, propriétés et opérateur) -> héritent de blocs
+	- élément du décor (Baba, eau, lave, rocher et mur) -> héritent de blocs
+	- plateau de jeu (taille du plateau)
+	- Console (gestion de l'affichage)
+
+Interfaces:
+	- Poussable 	Blocs
+	- déplaçable	Blocs
+	- gagnable		Blocs
+	- perdable		Blocs
+	- noyable		Blocs
+	- passable		Blocs
+	
