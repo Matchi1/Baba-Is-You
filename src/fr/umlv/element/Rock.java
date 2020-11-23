@@ -9,7 +9,11 @@ public class Rock extends AbstractBloc {
 	private Ellipse2D.Float ellipse = new Ellipse2D.Float(0, 0, 0, 0);
 	
 	public Rock(int x, int y) {
-		super(x, y);
+		super(x, y, new Color(172, 103, 0), Element.Rock);
+	}
+	
+	public Color getColor() {
+		return super.getColor();
 	}
 	
 	public void draw(ApplicationContext context, float x, float y, int len) {
@@ -18,10 +22,9 @@ public class Rock extends AbstractBloc {
         graphics.setColor(Color.BLACK);
         graphics.fill(ellipse);
         
-        Color color = new Color(172, 103, 0);
         // show a new ellipse at the position of the pointer
-        graphics.setColor(color);
-        ellipse = new Ellipse2D.Float(x - len/2, y - len/2, len, len);
+        graphics.setColor(getColor());
+        ellipse = new Ellipse2D.Float(x, y, len, len);
         graphics.fill(ellipse);
       });
 	}

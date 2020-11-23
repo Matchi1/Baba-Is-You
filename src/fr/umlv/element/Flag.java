@@ -6,10 +6,14 @@ import java.awt.geom.Ellipse2D;
 import fr.umlv.zen5.ApplicationContext;
 
 public class Flag extends AbstractBloc {
-private Ellipse2D.Float ellipse = new Ellipse2D.Float(0, 0, 0, 0);
+	private Ellipse2D.Float ellipse = new Ellipse2D.Float(0, 0, 0, 0);
 	
 	public Flag(int x, int y) {
-		super(x, y);
+		super(x, y, Color.yellow, Element.Flag);
+	}
+	
+	public Color getColor() {
+		return super.getColor();
 	}
 	
 	public void draw(ApplicationContext context, float x, float y, int len) {
@@ -19,8 +23,8 @@ private Ellipse2D.Float ellipse = new Ellipse2D.Float(0, 0, 0, 0);
         graphics.fill(ellipse);
         
         // show a new ellipse at the position of the pointer
-        graphics.setColor(Color.yellow);
-        ellipse = new Ellipse2D.Float(x - len/2, y - len/2, len, len);
+        graphics.setColor(getColor());
+        ellipse = new Ellipse2D.Float(x, y, len, len);
         graphics.fill(ellipse);
       });
 	}
