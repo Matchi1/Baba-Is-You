@@ -2,13 +2,15 @@ package fr.umlv.main;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
 
 import fr.umlv.board.Board;
+import fr.umlv.board.Direction;
 import fr.umlv.element.Baba;
 import fr.umlv.element.Bloc;
 import fr.umlv.element.ControlledBlocs;
 import fr.umlv.element.Element;
+import fr.umlv.element.Rock;
+import fr.umlv.element.Wall;
 import fr.umlv.zen5.Application;
 import fr.umlv.zen5.Event;
 import fr.umlv.zen5.Event.Action;
@@ -17,28 +19,25 @@ import fr.umlv.zen5.ScreenInfo;
 
 public class Game {
 	
-	public Board createBoard(int lenX, int lenY) {
-		Board b = new Board(lenX, lenY);
-		int x, y;
-		x = lenX - 1;
-		y = lenY - 1;
-		b.addBloc(x, y, new Baba(x, y));
-		return b;
-	}
-	
   public static void main(String[] args) {
 	Application.run(Color.BLACK, context -> {
 	  ScreenInfo screenInfo = context.getScreenInfo();
-	  Board b = new Board(3, 3);
-	  ControlledBlocs cb = new ControlledBlocs();
-	  int x = 2, y = 2;
-	  float width = screenInfo.getWidth();
-	  float height = screenInfo.getHeight();
-	  float pos_x = (width - b.length_bloc() * b.taille().x()) / 2;
-	  float pos_y = (height - b.length_bloc() * b.taille().y()) / 2;
-	  b.addBloc(x, y, new Baba(x, y));
-	  // get the size of the screen
+	  int width = (int)screenInfo.getWidth();
+	  int height = (int)screenInfo.getHeight();
 	  
+	  Board b = Board.createBoard(width, height, 10, 10);
+	  Bloc wall = new Wall(0, 0);
+	  Bloc rock = new Rock(1, 1);
+	  wall.stop(true);
+	  rock.push(true);
+	  b.addBloc(wall.position().x(), wall.position().x(), wall);
+	  b.addBloc(rock.position().x(), rock.position().y(), rock);
+	  b.addBloc(2, 2, new Baba(2, 2));
+	  
+	  ControlledBlocs cb = new ControlledBlocs(b, Element.Baba);
+	  int pos_x = (int) ((width - b.length_bloc() * b.length().x()) / 2);
+	  int pos_y = (int) ((height - b.length_bloc() * b.length().y()) / 2);
+
 	  cb.initGroup(b, Element.Baba);
 	  System.out.println("size of the screen (" + width + " x " + height + ")");
 	  
@@ -48,11 +47,12 @@ public class Game {
 	  });
 	  
 	  for(;;) {
+		  b.refresh();
+		  b.draw(context, pos_x, pos_y);
 		  Event event = context.pollOrWaitEvent(10);
 	      if (event == null) {  // no event
 	    	  continue;
 	      }
-	      b.draw(context, pos_x, pos_y);
 		  Action action = event.getAction();
 		  if (action == Action.KEY_PRESSED) {
 			  if(event.getKey() == KeyboardKey.Q) {
@@ -61,23 +61,21 @@ public class Game {
 	              return;
 			  } else if(event.getKey() == KeyboardKey.UP) {
 				  cb.translate(0, -1);
-				  if(!b.isLegal(cb.group()))
+				  if(!b.isLegal(cb.lstPosition(), Direction.North))
 					  cb.translate(0, 1);
 			  } else if(event.getKey() == KeyboardKey.RIGHT) {
 				  cb.translate(1, 0);
-				  if(!b.isLegal(cb.group()))
+				  if(!b.isLegal(cb.lstPosition(), Direction.East))
 					  cb.translate(-1, 0);
 			  } else if(event.getKey() == KeyboardKey.DOWN) {
 				  cb.translate(0, 1);
-				  if(!b.isLegal(cb.group()))
+				  if(!b.isLegal(cb.lstPosition(), Direction.South))
 					  cb.translate(0, -1);
 			  } else if(event.getKey() == KeyboardKey.LEFT) {
 				  cb.translate(-1, 0);
-				  if(!b.isLegal(cb.group()))
+				  if(!b.isLegal(cb.lstPosition(), Direction.West))
 					  cb.translate(1, 0);
 			  }
-			  b.refresh();
-			  b.draw(context, pos_x, pos_y);
 	      }
 	  }
 	});

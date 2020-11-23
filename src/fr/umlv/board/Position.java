@@ -1,9 +1,6 @@
 package fr.umlv.board;
 
-import java.util.ArrayList;
 import java.util.Objects;
-
-import fr.umlv.element.Bloc;
 
 public class Position {
 	private int x, y;
@@ -52,6 +49,19 @@ public class Position {
 	public void translate(int dx, int dy) {
 		this.x += dx;
 		this.y += dy;
+	}
+	
+	public void translate(Direction d) {
+		switch(d) {
+		case North:
+			translate(0, -1); break;
+		case South:
+			translate(0, 1); break;
+		case East:
+			translate(1, 0); break;
+		default:
+			translate(-1, 0); break;
+		}
 	}
 	
 	public Position clone() {

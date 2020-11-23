@@ -1,14 +1,17 @@
 package fr.umlv.element;
 
+import java.awt.Color;
+import java.awt.Shape;
+
+import fr.umlv.board.Direction;
 import fr.umlv.board.Position;
-import fr.umlv.zen5.ApplicationContext;
 
 public interface Bloc {
 	public final int nb_actions = 6;
 	
-	public void draw(ApplicationContext context, float x, float y, int len);
-	
 	public Element element();
+	
+	public void translate(Direction d);
 	
 	public Position position();
 	public void position(int x, int y);
@@ -30,6 +33,12 @@ public interface Bloc {
 	
 	public boolean melt();
 	public void melt(boolean state);
+	
+	public Shape shape();
+	public void shape(int x, int y, int len);
+	
+	public Color color();
+	public void color(Color c);
 	
 	public String toString();
 }

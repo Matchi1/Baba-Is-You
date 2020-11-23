@@ -1,7 +1,9 @@
 package fr.umlv.element;
 
 import java.awt.Color;
+import java.awt.Shape;
 
+import fr.umlv.board.Direction;
 import fr.umlv.board.Position;
 
 abstract class AbstractBloc implements Bloc{
@@ -9,6 +11,7 @@ abstract class AbstractBloc implements Bloc{
 	private boolean[] actions;
 	private Color color;
 	private final Element elt;
+	private Shape shape;
 	
 	/*
 	 * actions[0] : push
@@ -19,11 +22,12 @@ abstract class AbstractBloc implements Bloc{
 	 * actions[5] : melt
 	 */
 	
-	AbstractBloc(int x, int y, Color color, Element elt) {
+	AbstractBloc(int x, int y, Color color, Element elt, Shape s) {
 		this.pos = new Position(x, y);
 		this.actions = new boolean[nb_actions];
 		this.color = color;
 		this.elt = elt;
+		this.shape = s;
 		init_actions();
 	}
 	
@@ -35,6 +39,10 @@ abstract class AbstractBloc implements Bloc{
 	
 	public Element element() {
 		return elt;
+	}
+	
+	public void translate(Direction d) {
+		pos.translate(d);
 	}
 	
 	public Position position() {
@@ -120,6 +128,22 @@ abstract class AbstractBloc implements Bloc{
 	
 	public void melt(boolean state) {
 		actions[5] = state;
+	}
+	
+	public Shape shape() {
+		return shape;
+	}
+	
+	public void shape(Shape s) {
+		this.shape = s;
+	}
+	
+	public Color color() {
+		return color;
+	}
+	
+	public void color(Color c) {
+		color = c;
 	}
 	
 	@Override
