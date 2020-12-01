@@ -1,15 +1,16 @@
 package fr.umlv.element;
 
-import java.awt.Color;
-import java.awt.Rectangle;
-import java.awt.geom.Ellipse2D;
+import java.io.IOException;
 
 public class Rock extends AbstractBloc {	
-	public Rock(int x, int y) {
-		super(x, y, new Color(172, 103, 0), Element.Rock, new Rectangle.Float());
+	public Rock(int x, int y, boolean isProp) {
+		super(x, y, Element.Rock, isProp);
 	}
 	
-	public void shape(int x, int y, int len) {
-		super.shape(new Ellipse2D.Float(x, y, len, len));
+	public static Rock createRock(int x, int y, Boolean isProp) throws IOException {
+		Rock rock = new Rock(x, y, isProp);
+		String fileName = rock.pathImage();
+        rock.initImageIcon(fileName);
+		return rock;
 	}
 }

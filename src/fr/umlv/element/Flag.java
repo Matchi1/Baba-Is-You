@@ -1,15 +1,17 @@
 package fr.umlv.element;
 
-import java.awt.Color;
-import java.awt.geom.Ellipse2D;
+import java.io.IOException;
 
 public class Flag extends AbstractBloc {
 	
-	public Flag(int x, int y) {
-		super(x, y, Color.yellow, Element.Flag, new Ellipse2D.Float());
+	private Flag(int x, int y, boolean isProp) {
+		super(x, y, Element.Flag, isProp);
 	}
 	
-	public void shape(int x, int y, int len) {
-		super.shape(new Ellipse2D.Float(x, y, len, len));
+	public static Flag createFlag(int x, int y, Boolean isProp) throws IOException {
+		Flag flag = new Flag(x, y, isProp);
+		String fileName = flag.pathImage();
+        flag.initImageIcon(fileName);
+		return flag;
 	}
 }

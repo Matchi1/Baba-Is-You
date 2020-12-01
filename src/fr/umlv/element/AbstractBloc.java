@@ -1,40 +1,54 @@
 package fr.umlv.element;
 
-import java.awt.Color;
-import java.awt.Shape;
+import java.awt.Image;
+import java.awt.image.ImageObserver;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 import fr.umlv.board.Direction;
 import fr.umlv.board.Position;
+import fr.umlv.properties.Property;
 
-abstract class AbstractBloc implements Bloc{
+public abstract class AbstractBloc implements Bloc {
 	private Position pos;
-	private boolean[] actions;
-	private Color color;
+	private boolean isProperty;
+	private HashMap<Property, Boolean> states;
 	private final Element elt;
-	private Shape shape;
+	ImageIcon icon;
 	
-	/*
-	 * actions[0] : push
-	 * actions[1] : win
-	 * actions[2] : defeat
-	 * actions[3] : sink
-	 * actions[4] : stop
-	 * actions[5] : melt
-	 */
-	
-	AbstractBloc(int x, int y, Color color, Element elt, Shape s) {
+	public AbstractBloc(int x, int y, Element elt, Boolean isProperty) {
 		this.pos = new Position(x, y);
-		this.actions = new boolean[nb_actions];
-		this.color = color;
 		this.elt = elt;
-		this.shape = s;
-		init_actions();
+		this.isProperty = isProperty;
+		this.states = new HashMap<>();
 	}
 	
-	private void init_actions() {
-		for(int i = 0; i < nb_actions; i++) {
-			actions[i] = false;
-		}
+	public void initImageIcon(String fileName) throws IOException {
+		File f = new File(fileName);
+		InputStream inputS = new FileInputStream(f);
+		Image img = ImageIO.read(inputS);
+		JFrame imgO = new JFrame();
+        ImageIcon icon = new ImageIcon(fileName);
+        JLabel jl = new JLabel(icon);
+        imgO.getContentPane().add(jl);
+        imgO.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        icon.setImage(img);
+        icon.setImageObserver(imgO);
+        this.icon = icon;
+	}
+	
+	public String pathImage() {
+		if(isProperty)
+			return elt.pathElementText();
+		return elt.pathElement();
 	}
 	
 	public Element element() {
@@ -43,6 +57,14 @@ abstract class AbstractBloc implements Bloc{
 	
 	public void translate(Direction d) {
 		pos.translate(d);
+	}
+	
+	public ImageIcon image() {
+		return icon;
+	}
+	
+	public void image(ImageIcon icon) {
+		this.icon = icon;
 	}
 	
 	public Position position() {
@@ -54,96 +76,18 @@ abstract class AbstractBloc implements Bloc{
 		pos.y(y);
 	}
 	
-	public Color getColor() {
-		return color;
+	public Boolean getState(Property prop) {
+		if(states.get(prop) == null)
+			return false;
+		return true;
 	}
 	
-	/**
-	 * Show if the Bloc can be pushed by other Bloc.
-	 * @return true if it can be pushed false otherwise.
-	 */
-	public boolean push() {
-		return actions[0];
+	public void putState(Property prop) {
+		states.put(prop, true);
 	}
 	
-	public void push(boolean state) {
-		actions[0] = state;
-	}
-	
-	/**
-	 * Show if the Bloc is a condition of win for the player.
-	 * @return true if it can make the player win the game false otherwise.
-	 */
-	public boolean win() {
-		return actions[1];
-	}
-	
-	public void win(boolean state) {
-		actions[1] = state;
-	}
-	
-	/**
-	 * Show if the Bloc is a condition of defeat for the player.
-	 * @return true if it can make the player lose the game false otherwise.
-	 */
-	public boolean defeat() {
-		return actions[2];
-	}
-	
-	public void defeat(boolean state) {
-		actions[2] = state;
-	}
-	
-	/**
-	 * Show if the Bloc can sink other Bloc.
-	 * @return true if it can sink false otherwise.
-	 */
-	public boolean sink() {
-		return actions[3];
-	}
-	
-	public void sink(boolean state) {
-		actions[3] = state;
-	}
-	
-	/**
-	 * Show if the Bloc can stop other Bloc.
-	 * @return true if it can stop false otherwise.
-	 */
-	public boolean stop() {
-		return actions[4];
-	}
-	
-	public void stop(boolean state) {
-		actions[4] = state;
-	}
-	
-	/**
-	 * Show if the Bloc can melt other Bloc.
-	 * @return true if it can melt false otherwise.
-	 */
-	public boolean melt() {
-		return actions[5];
-	}
-	
-	public void melt(boolean state) {
-		actions[5] = state;
-	}
-	
-	public Shape shape() {
-		return shape;
-	}
-	
-	public void shape(Shape s) {
-		this.shape = s;
-	}
-	
-	public Color color() {
-		return color;
-	}
-	
-	public void color(Color c) {
-		color = c;
+	public void removeState(Property prop) {
+		states.remove(prop);
 	}
 	
 	@Override
@@ -152,20 +96,10 @@ abstract class AbstractBloc implements Bloc{
 		str.append(elt);
 		str.append(pos);
 		str.append("\n");
-		str.append("push : ");
-		str.append(actions[0]);
-		str.append(" win : ");
-		str.append(actions[1]);
-		str.append(" defeat : ");
-		str.append(actions[2]);
-		str.append(" sink : ");
-		str.append(actions[3]);
-		str.append(" stop : ");
-		str.append(actions[4]);
-		str.append(" melt : ");
-		str.append(actions[5]);
-		str.append("\n");
-		str.append(color);
+		for(var key : states.keySet()) {
+			str.append(key.toString());
+			str.append("\n");
+		}
 		return str.toString();
 	}
 }

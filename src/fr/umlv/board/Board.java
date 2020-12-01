@@ -3,16 +3,20 @@ package fr.umlv.board;
 import java.awt.Color;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.ImageObserver;
 import java.util.ArrayList;
 
+import javax.swing.ImageIcon;
+
 import fr.umlv.element.Bloc;
+import fr.umlv.properties.Property;
 import fr.umlv.zen5.ApplicationContext;
 
 public class Board {
 	private final Position length;
 	private Shape rectangle;
 	private ArrayList<Bloc>[][] board;
-	private final int length_bloc = 40; 
+	private final int lengthBloc = 30; 
 	
 	public Board(int lenX, int lenY) {
 		if(lenX < 0 || lenY < 0)
@@ -52,17 +56,17 @@ public class Board {
 		return length.clone();
 	}
 	
-	public int length_bloc() {
-		return length_bloc;
+	public int lengthBloc() {
+		return lengthBloc;
 	}
 	
 	public void initRectangle(int screenWidth, int screenHeight, int len_x, int len_y) {
-		int width = (screenWidth - length_bloc * length.x()) / 2;
-		int height = (screenHeight - length_bloc * length.y()) / 2;
-		rectangle = new Rectangle2D.Float(width, height , len_x * length_bloc, len_y * length_bloc);
+		int width = (screenWidth - lengthBloc * length.x()) / 2;
+		int height = (screenHeight - lengthBloc * length.y()) / 2;
+		rectangle = new Rectangle2D.Float(width, height , len_x * lengthBloc, len_y * lengthBloc);
 	}
 	
-	public void draw(ApplicationContext context, float x, float y) {
+	public void draw(ApplicationContext context, int x, int y) {
 		context.renderFrame(graphics -> {
 			
 		    // hide the previous rectangle
@@ -70,13 +74,14 @@ public class Board {
 		    graphics.fill(rectangle);
 		    
 		    for(int i = 0; i < length.x(); i++) {
+		    	int xBloc = x + lengthBloc * i;
 		    	for(int j = 0; j < length.y(); j++) {
-		    		for(var bloc : board[i][j]) {
-		    			float xBloc = x + length_bloc * i;
-		    			float yBloc = y + length_bloc * j;
-		    			graphics.setColor(bloc.color());
-		    			bloc.shape((int)xBloc, (int)yBloc, length_bloc);
-		    			graphics.fill(bloc.shape());
+		    		int yBloc = y + lengthBloc * j;
+		    		for(var bloc : board[i][j]) {	
+		    			ImageIcon icon = bloc.image();
+		    			ImageObserver imgO = icon.getImageObserver();
+		    			imgO.imageUpdate(icon.getImage(), ImageObserver.FRAMEBITS, xBloc, yBloc, lengthBloc, lengthBloc);
+		    			graphics.drawImage(icon.getImage(), xBloc, yBloc, imgO);
 		    		}
 		    	}
 		    }
@@ -85,9 +90,9 @@ public class Board {
 	
 	private int isLegal(ArrayList<Bloc> lst) {
 		for(var bloc : lst) {
-			if(bloc.stop())
+			if(bloc.getState(Property.Stop))
 				return -1;
-			else if(bloc.push())
+			else if(bloc.getState(Property.Push))
 				return 0;
 		}
 		return 1;
@@ -107,7 +112,7 @@ public class Board {
 			newPos.translate(d);
 			if(isLegal(newPos, d)) {				// Verify if we can push the next bloc
 				for(var bloc : currentLst) {
-					if(bloc.push())
+					if(bloc.getState(Property.Push))
 						bloc.translate(d);
 				}
 			} else {

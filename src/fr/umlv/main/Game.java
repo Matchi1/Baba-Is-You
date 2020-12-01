@@ -2,15 +2,18 @@ package fr.umlv.main;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
+import java.io.IOException;
 
 import fr.umlv.board.Board;
 import fr.umlv.board.Direction;
 import fr.umlv.element.Baba;
 import fr.umlv.element.Bloc;
-import fr.umlv.element.ControlledBlocs;
 import fr.umlv.element.Element;
 import fr.umlv.element.Rock;
 import fr.umlv.element.Wall;
+import fr.umlv.group.AllElement;
+import fr.umlv.group.ControlledBlocs;
+import fr.umlv.properties.Property;
 import fr.umlv.zen5.Application;
 import fr.umlv.zen5.Event;
 import fr.umlv.zen5.Event.Action;
@@ -26,20 +29,24 @@ public class Game {
 	  int height = (int)screenInfo.getHeight();
 	  
 	  Board b = Board.createBoard(width, height, 10, 10);
-	  Bloc wall = new Wall(0, 0);
-	  Bloc rock = new Rock(1, 1);
-	  wall.stop(true);
-	  rock.push(true);
-	  b.addBloc(wall.position().x(), wall.position().x(), wall);
-	  b.addBloc(rock.position().x(), rock.position().y(), rock);
-	  b.addBloc(2, 2, new Baba(2, 2));
-	  
-	  ControlledBlocs cb = new ControlledBlocs(b, Element.Baba);
-	  int pos_x = (int) ((width - b.length_bloc() * b.length().x()) / 2);
-	  int pos_y = (int) ((height - b.length_bloc() * b.length().y()) / 2);
+	  try {
+		Bloc rock = Rock.createRock(1, 1, false);
+		rock.putState(Property.Push);
+		Bloc wall = Wall.createWall(5, 5, false);
+		wall.putState(Property.Stop);
+		b.addBloc(2, 2, Baba.createBaba(2, 2, false));
+		b.addBloc(0, 0, rock);
+		b.addBloc(1, 1, wall);
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
 
-	  cb.initGroup(b, Element.Baba);
-	  System.out.println("size of the screen (" + width + " x " + height + ")");
+	  AllElement altElt = AllElement.createAllElement(b);
+	  
+	  ControlledBlocs cb = ControlledBlocs.createCB(altElt, Element.Baba);
+	  int pos_x = (int) ((width - b.lengthBloc() * b.length().x()) / 2);
+	  int pos_y = (int) ((height - b.lengthBloc() * b.length().y()) / 2);
 	  
 	  context.renderFrame(graphics -> {
 	    graphics.setColor(Color.BLACK);

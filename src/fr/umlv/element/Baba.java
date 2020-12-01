@@ -1,15 +1,17 @@
 package fr.umlv.element;
 
-import java.awt.Color;
-import java.awt.geom.Ellipse2D;
+import java.io.IOException;
 
 public class Baba extends AbstractBloc{
 	
-	public Baba(int x, int y) {
-		super(x, y, Color.white, Element.Baba, new Ellipse2D.Float());
+	private Baba(int x, int y, boolean isProp) {
+		super(x, y, Element.Baba, isProp);
 	}
 	
-	public void shape(int x, int y, int len) {
-		super.shape(new Ellipse2D.Float(x, y, len, len));
+	public static Baba createBaba(int x, int y, Boolean isProp) throws IOException {
+		Baba baba = new Baba(x, y, isProp);
+		String fileName = baba.pathImage();
+        baba.initImageIcon(fileName);
+		return baba;
 	}
 }

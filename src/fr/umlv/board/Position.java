@@ -30,22 +30,6 @@ public class Position {
 		y = value;
 	}
 	
-	public void incX() {
-		x++;
-	}
-	
-	public void decX() {
-		x--;
-	}
-	
-	public void incY() {
-		y++;
-	}
-	
-	public void decY() {
-		y--;
-	}
-	
 	public void translate(int dx, int dy) {
 		this.x += dx;
 		this.y += dy;
