@@ -78,7 +78,7 @@ public abstract class AbstractBloc implements Bloc {
 		pos.y(y);
 	}
 	
-	public Boolean getState(PropertyCategory prop) {
+	public Boolean containState(PropertyCategory prop) {
 		if(states.get(prop) == null)
 			return false;
 		return true;

@@ -4,12 +4,12 @@ import java.io.IOException;
 import java.util.Objects;
 
 import fr.umlv.bloc.AbstractBloc;
+import fr.umlv.property.PropertyCategory;
 
 public class Element extends AbstractBloc {
 	private Element(int x, int y, ElementCategory elt) {
 		super(x, y, elt);
 	}
-	
 	
 	public static Element createElement(int x, int y, ElementCategory elt) throws IOException {
 		Objects.requireNonNull(elt);

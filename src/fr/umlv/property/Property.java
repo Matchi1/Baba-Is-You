@@ -18,6 +18,7 @@ public class Property extends AbstractBloc implements IsProperty {
 	public static Property createProperty(int x, int y, PropertyCategory prop) throws IOException {
 		Property newProp = new Property(x, y, prop);
 		String fileImage = newProp.pathImage();
+		newProp.putState(PropertyCategory.Push);
 		newProp.initImageIcon(fileImage);
 		return newProp;
 	}

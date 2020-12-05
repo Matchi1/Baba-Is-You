@@ -3,6 +3,7 @@ package fr.umlv.group;
 import java.util.ArrayList;
 
 import fr.umlv.bloc.Bloc;
+import fr.umlv.board.Direction;
 import fr.umlv.board.Position;
 import fr.umlv.element.ElementCategory;
 
@@ -32,6 +33,14 @@ public class ControlledBlocs {
 		for(var bloc : group) {
 			Position next = bloc.position();
 			next.translate(dx, dy);
+			bloc.position(next.x(), next.y());
+		}
+	}
+	
+	public void translate(Direction d) {
+		for(var bloc : group) {
+			Position next = bloc.position();
+			next.translate(d);
 			bloc.position(next.x(), next.y());
 		}
 	}

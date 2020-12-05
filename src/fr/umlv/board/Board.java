@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import javax.swing.ImageIcon;
 
 import fr.umlv.bloc.Bloc;
+import fr.umlv.group.ControlledBlocs;
 import fr.umlv.property.PropertyCategory;
 import fr.umlv.zen5.ApplicationContext;
 
@@ -92,44 +93,28 @@ public class Board {
 	  });
 	}
 	
-	private int isLegal(ArrayList<Bloc> lst) {
-		for(var bloc : lst) {
-			if(bloc.getState(PropertyCategory.Stop))
-				return -1;
-			else if(bloc.getState(PropertyCategory.Push))
-				return 0;
-		}
-		return 1;
-	}
-	
-	public boolean isLegal(Position nextPos, Direction d) {
-		if(nextPos.x() < 0 || length().x() <= nextPos.x() || nextPos.y() < 0 || length().y() <= nextPos.y())
+	public boolean isLegal(Position pos) {
+		if(pos.x() < 0 || length().x() <= pos.x() || pos.y() < 0 || length().y() <= pos.y())
 			return false;
-		ArrayList<Bloc> currentLst = board[nextPos.x()][nextPos.y()];
-		if(currentLst.isEmpty()) 					// Test if there is no bloc in this position
-			return true;
-		int returnValue = isLegal(currentLst);
-		if(returnValue == -1) 						// the bloc can't be moved in this location
-			return false;
-		else if(returnValue == 0) {					// there is a pushable bloc in this location
-			Position newPos = new Position(nextPos);
-			newPos.translate(d);
-			if(isLegal(newPos, d)) {				// Verify if we can push the next bloc
-				for(var bloc : currentLst) {
-					if(bloc.getState(PropertyCategory.Push))
-						bloc.translate(d);
-				}
-			} else {
+		ArrayList<Bloc> currentBloc = board[pos.x()][pos.y()];
+		for(var bloc : currentBloc) {
+			if(bloc.containState(PropertyCategory.Stop)) {
 				return false;
 			}
 		}
 		return true;
 	}
 	
-	public boolean isLegal(ArrayList<Position> lstPos, Direction d) {
-		for(var pos : lstPos) {
-			if(!isLegal(pos, d))
-				return false;
+	public boolean blocsPositionIsLegal() {
+		for(int i = 0; i < length.x(); i++) {
+			for(int j = 0; j < length.y(); j++) {
+				for(var bloc : board[i][j]) {
+					if(bloc.position().x() != i || bloc.position().y() != j) {
+						if(!isLegal(bloc.position()))
+							return false;
+					}
+				}
+			}
 		}
 		return true;
 	}
@@ -154,6 +139,41 @@ public class Board {
 		for(int i = 0; i < length.x(); i++) {
 			for(int j = 0; j < length.y(); j++) {
 				refresh(i, j);
+			}
+		}
+	}
+	
+	private int pushBloc(Position pos, Direction d) {
+		if(pos.x() < 0 || length().x() <= pos.x() || pos.y() < 0 || length().y() <= pos.y())
+			return 0;
+		ArrayList<Bloc> lst = board[pos.x()][pos.y()];
+		for(var bloc : lst) {
+			if(bloc.containState(PropertyCategory.Push)) {
+				bloc.translate(d);
+				return pushBloc(bloc.position(), d);
+			}
+		}
+		return 1;
+	}
+	
+	public int moveControlledBlocs(ControlledBlocs cb, Direction d) {
+		cb.translate(d);
+		for(var bloc : cb.group()) {
+			if(pushBloc(bloc.position(), d) == 0) {
+				resetBoard();
+				return 0;
+			}
+		}
+		return 1;
+	}
+	
+	public void resetBoard() {
+		for(int i = 0; i < length.x(); i++) {
+			for(int j = 0; j < length.y(); j++) {
+				for(var bloc : board[i][j]) {
+					if(bloc.position().x() != i || bloc.position().y() != j)
+						bloc.position(i, j);
+				}
 			}
 		}
 	}

@@ -6,6 +6,8 @@ import java.io.IOException;
 
 import fr.umlv.board.Board;
 import fr.umlv.board.Direction;
+import fr.umlv.board.Position;
+import fr.umlv.element.Element;
 import fr.umlv.element.ElementCategory;
 import fr.umlv.group.AllElement;
 import fr.umlv.group.ControlledBlocs;
@@ -33,9 +35,16 @@ public class Game {
 		var name1 = Name.createName(1, 1, ElementCategory.Baba);
 		var op1 = Operator.createOperator(2, 1, OperatorCategory.Is);
 		var prop1 = Property.createProperty(3, 1, PropertyCategory.You);
+		var baba1 = Element.createElement(4, 4, ElementCategory.Baba);
+		var baba2 = Element.createElement(1, 2, ElementCategory.Baba);
+		var wall1 = Element.createElement(1, 4, ElementCategory.Wall);
+		wall1.putState(PropertyCategory.Stop);
 		b.addBloc(name1.position(), name1);
 		b.addBloc(op1.position(), op1);
 		b.addBloc(prop1.position(), prop1);
+		b.addBloc(baba1.position(), baba1);
+		b.addBloc(baba2.position(), baba2);
+		b.addBloc(wall1.position(), wall1);
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
@@ -65,22 +74,16 @@ public class Game {
 				  System.out.println("abort abort !");
 	              context.exit(0);
 	              return;
-			  } else if(event.getKey() == KeyboardKey.UP) {
-				  cb.translate(0, -1);
-				  if(!b.isLegal(cb.lstPosition(), Direction.North))
-					  cb.translate(0, 1);
-			  } else if(event.getKey() == KeyboardKey.RIGHT) {
-				  cb.translate(1, 0);
-				  if(!b.isLegal(cb.lstPosition(), Direction.East))
-					  cb.translate(-1, 0);
-			  } else if(event.getKey() == KeyboardKey.DOWN) {
-				  cb.translate(0, 1);
-				  if(!b.isLegal(cb.lstPosition(), Direction.South))
-					  cb.translate(0, -1);
-			  } else if(event.getKey() == KeyboardKey.LEFT) {
-				  cb.translate(-1, 0);
-				  if(!b.isLegal(cb.lstPosition(), Direction.West))
-					  cb.translate(1, 0);
+			  } else if(event.getKey() == KeyboardKey.UP || event.getKey() == KeyboardKey.DOWN
+					  || event.getKey() == KeyboardKey.RIGHT || event.getKey() == KeyboardKey.LEFT) {
+				  Direction d = Direction.convertKeyboardKeyToDirection(event.getKey());
+				  if(b.moveControlledBlocs(cb, d) == 1) {
+					  if(b.blocsPositionIsLegal()) {
+						  b.refresh();
+					  } else {
+						  b.resetBoard();
+					  }
+				  }
 			  }
 	      }
 	  }

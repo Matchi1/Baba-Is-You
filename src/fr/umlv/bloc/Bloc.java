@@ -17,7 +17,7 @@ public interface Bloc extends IsElement {
 	public Position position();
 	public void position(int x, int y);
 	
-	public Boolean getState(PropertyCategory prop);
+	public Boolean containState(PropertyCategory prop);
 	public void putState(PropertyCategory prop);
 	public void removeState(PropertyCategory prop);
 	
