@@ -2,10 +2,9 @@ package fr.umlv.group;
 
 import java.util.ArrayList;
 
-import fr.umlv.board.Board;
+import fr.umlv.bloc.Bloc;
 import fr.umlv.board.Position;
-import fr.umlv.element.Bloc;
-import fr.umlv.element.Element;
+import fr.umlv.element.ElementCategory;
 
 public class ControlledBlocs {
 	private ArrayList<Bloc> group;
@@ -14,13 +13,13 @@ public class ControlledBlocs {
 		this.group = new ArrayList<Bloc>();
 	}
 	
-	public static ControlledBlocs createCB(AllElement allElt, Element elt) {
+	public static ControlledBlocs createCB(AllElement allElt, ElementCategory elt) {
 		ControlledBlocs cb = new ControlledBlocs();
 		cb.initGroup(allElt, elt);
 		return cb;
 	}
 	
-	public void initGroup(AllElement allElt, Element elt) {
+	public void initGroup(AllElement allElt, ElementCategory elt) {
 		ArrayList<Bloc> elements = allElt.chooseGroup(elt);
 		this.group = elements;
 	}

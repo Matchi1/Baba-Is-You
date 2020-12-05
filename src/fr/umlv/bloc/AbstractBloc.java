@@ -1,7 +1,6 @@
-package fr.umlv.element;
+package fr.umlv.bloc;
 
 import java.awt.Image;
-import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -15,19 +14,18 @@ import javax.swing.JLabel;
 
 import fr.umlv.board.Direction;
 import fr.umlv.board.Position;
-import fr.umlv.properties.Property;
+import fr.umlv.element.ElementCategory;
+import fr.umlv.property.PropertyCategory;
 
 public abstract class AbstractBloc implements Bloc {
 	private Position pos;
-	private boolean isProperty;
-	private HashMap<Property, Boolean> states;
-	private final Element elt;
-	ImageIcon icon;
+	private HashMap<PropertyCategory, Boolean> states;
+	private final ElementCategory elt;
+	private ImageIcon icon;
 	
-	public AbstractBloc(int x, int y, Element elt, Boolean isProperty) {
+	public AbstractBloc(int x, int y, ElementCategory elt) {
 		this.pos = new Position(x, y);
 		this.elt = elt;
-		this.isProperty = isProperty;
 		this.states = new HashMap<>();
 	}
 	
@@ -45,13 +43,17 @@ public abstract class AbstractBloc implements Bloc {
         this.icon = icon;
 	}
 	
-	public String pathImage() {
-		if(isProperty)
-			return elt.pathElementText();
-		return elt.pathElement();
+	public void initStates() {
+		if(elt == ElementCategory.Property) {
+			putState(PropertyCategory.Push);
+		}
 	}
 	
-	public Element element() {
+	public String pathImage() {
+		return elt.pathElementCategory();
+	}
+	
+	public ElementCategory element() {
 		return elt;
 	}
 	
@@ -76,17 +78,17 @@ public abstract class AbstractBloc implements Bloc {
 		pos.y(y);
 	}
 	
-	public Boolean getState(Property prop) {
+	public Boolean getState(PropertyCategory prop) {
 		if(states.get(prop) == null)
 			return false;
 		return true;
 	}
 	
-	public void putState(Property prop) {
+	public void putState(PropertyCategory prop) {
 		states.put(prop, true);
 	}
 	
-	public void removeState(Property prop) {
+	public void removeState(PropertyCategory prop) {
 		states.remove(prop);
 	}
 	

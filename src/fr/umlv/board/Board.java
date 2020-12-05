@@ -8,15 +8,15 @@ import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 
-import fr.umlv.element.Bloc;
-import fr.umlv.properties.Property;
+import fr.umlv.bloc.Bloc;
+import fr.umlv.property.PropertyCategory;
 import fr.umlv.zen5.ApplicationContext;
 
 public class Board {
 	private final Position length;
 	private Shape rectangle;
 	private ArrayList<Bloc>[][] board;
-	private final int lengthBloc = 30; 
+	private final int lengthBloc = 22; 
 	
 	public Board(int lenX, int lenY) {
 		if(lenX < 0 || lenY < 0)
@@ -46,6 +46,10 @@ public class Board {
 	
 	public void addBloc(int x, int y, Bloc bloc) {
 		board[x][y].add(bloc);
+	}
+	
+	public void addBloc(Position pos, Bloc bloc) {
+		board[pos.x()][pos.y()].add(bloc);
 	}
 	
 	public void removeBloc(int x, int y, Bloc bloc) {
@@ -90,9 +94,9 @@ public class Board {
 	
 	private int isLegal(ArrayList<Bloc> lst) {
 		for(var bloc : lst) {
-			if(bloc.getState(Property.Stop))
+			if(bloc.getState(PropertyCategory.Stop))
 				return -1;
-			else if(bloc.getState(Property.Push))
+			else if(bloc.getState(PropertyCategory.Push))
 				return 0;
 		}
 		return 1;
@@ -112,7 +116,7 @@ public class Board {
 			newPos.translate(d);
 			if(isLegal(newPos, d)) {				// Verify if we can push the next bloc
 				for(var bloc : currentLst) {
-					if(bloc.getState(Property.Push))
+					if(bloc.getState(PropertyCategory.Push))
 						bloc.translate(d);
 				}
 			} else {

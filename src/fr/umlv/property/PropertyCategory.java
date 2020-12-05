@@ -1,6 +1,7 @@
-package fr.umlv.properties;
+package fr.umlv.property;
 
-public enum Property {
+public enum PropertyCategory {
+	You("You", "img/Properties/YOU/Prop_YOU.gif" ),
 	Win("Win", "img/Properties/WIN/Prop_WIN.gif"),
 	Defeat("Defeat", "img/Properties/DEFEAT/Prop_DEFEAT.gif"),
 	Hot("Hot", "img/Properties/HOT/Prop_HOT.gif"),
@@ -11,11 +12,11 @@ public enum Property {
 	None("None", null);
 	
 	private String name;
-	private String pathProperty;
+	private String pathPropertyCategory;
 	
-	private Property(String name, String pathProperty) {
+	private PropertyCategory(String name, String pathProperty) {
 		this.name = name;
-		this.pathProperty = pathProperty;
+		this.pathPropertyCategory = pathProperty;
 	}
 	
 	public String Name() {
@@ -23,7 +24,7 @@ public enum Property {
 	}
 	
 	public String pathProperty() {
-		return pathProperty;
+		return pathPropertyCategory;
 	}
 	
 	@Override

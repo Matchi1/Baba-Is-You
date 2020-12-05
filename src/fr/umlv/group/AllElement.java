@@ -2,10 +2,11 @@ package fr.umlv.group;
 
 import java.util.ArrayList;
 
+import fr.umlv.bloc.Bloc;
 import fr.umlv.board.Board;
-import fr.umlv.element.Bloc;
-import fr.umlv.element.Element;
-import fr.umlv.properties.Property;
+import fr.umlv.board.Position;
+import fr.umlv.element.ElementCategory;
+import fr.umlv.property.PropertyCategory;
 
 public class AllElement {
 	private ArrayList<Bloc> allBaba;
@@ -15,6 +16,8 @@ public class AllElement {
 	private ArrayList<Bloc> allLava;
 	private ArrayList<Bloc> allWater;
 	private ArrayList<Bloc> allName;
+	private ArrayList<Bloc> allOperators;
+	private ArrayList<Bloc> allProperties;
 	
 	private AllElement() {
 		this.allBaba = new ArrayList<>();
@@ -24,6 +27,8 @@ public class AllElement {
 		this.allLava = new ArrayList<>();
 		this.allWater = new ArrayList<>();
 		this.allName = new ArrayList<>();
+		this.allOperators = new ArrayList<>();
+		this.allProperties = new ArrayList<>();
 	}
 	
 	public static AllElement createAllElement(Board b) {
@@ -43,7 +48,7 @@ public class AllElement {
 		group.add(bloc);
 	}
 
-	public ArrayList<Bloc> chooseGroup(Element elt){
+	public ArrayList<Bloc> chooseGroup(ElementCategory elt){
 		switch(elt) {
 		case Rock: return allRock;
 		case Wall: return allWall;
@@ -51,18 +56,21 @@ public class AllElement {
 		case Lava: return allLava;
 		case Water: return allWater;
 		case Name: return allName;
+		case Operator: return allOperators;
+		case Property: return allProperties;
 		default: return allBaba;
 		}
 	}
 	
-	public void applyRules(Element elt, Property prop, boolean putState) {
-		ArrayList<Bloc> group = chooseGroup(elt);
-		for(var bloc : group) {
-			if(putState) {
-				bloc.putState(prop);
-			} else {
-				bloc.removeState(prop);
-			}
+	public boolean verifyOperators(Position pos) {
+		return true;
+	}
+	
+	public Bloc verifyProperty(Position pos) {
+		for(var bloc : allProperties) {
+			if(pos.equals(bloc.position()))
+				return bloc;
 		}
+		return null;
 	}
 }

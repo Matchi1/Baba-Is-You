@@ -6,14 +6,14 @@ import java.io.IOException;
 
 import fr.umlv.board.Board;
 import fr.umlv.board.Direction;
-import fr.umlv.element.Baba;
-import fr.umlv.element.Bloc;
-import fr.umlv.element.Element;
-import fr.umlv.element.Rock;
-import fr.umlv.element.Wall;
+import fr.umlv.element.ElementCategory;
 import fr.umlv.group.AllElement;
 import fr.umlv.group.ControlledBlocs;
-import fr.umlv.properties.Property;
+import fr.umlv.name.Name;
+import fr.umlv.operator.Operator;
+import fr.umlv.operator.OperatorCategory;
+import fr.umlv.property.Property;
+import fr.umlv.property.PropertyCategory;
 import fr.umlv.zen5.Application;
 import fr.umlv.zen5.Event;
 import fr.umlv.zen5.Event.Action;
@@ -30,13 +30,12 @@ public class Game {
 	  
 	  Board b = Board.createBoard(width, height, 10, 10);
 	  try {
-		Bloc rock = Rock.createRock(1, 1, false);
-		rock.putState(Property.Push);
-		Bloc wall = Wall.createWall(5, 5, false);
-		wall.putState(Property.Stop);
-		b.addBloc(2, 2, Baba.createBaba(2, 2, false));
-		b.addBloc(0, 0, rock);
-		b.addBloc(1, 1, wall);
+		var name1 = Name.createName(1, 1, ElementCategory.Baba);
+		var op1 = Operator.createOperator(2, 1, OperatorCategory.Is);
+		var prop1 = Property.createProperty(3, 1, PropertyCategory.You);
+		b.addBloc(name1.position(), name1);
+		b.addBloc(op1.position(), op1);
+		b.addBloc(prop1.position(), prop1);
 	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
@@ -44,7 +43,7 @@ public class Game {
 
 	  AllElement altElt = AllElement.createAllElement(b);
 	  
-	  ControlledBlocs cb = ControlledBlocs.createCB(altElt, Element.Baba);
+	  ControlledBlocs cb = ControlledBlocs.createCB(altElt, ElementCategory.Baba);
 	  int pos_x = (int) ((width - b.lengthBloc() * b.length().x()) / 2);
 	  int pos_y = (int) ((height - b.lengthBloc() * b.length().y()) / 2);
 	  
