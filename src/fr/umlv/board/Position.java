@@ -35,17 +35,21 @@ public class Position {
 		this.y += dy;
 	}
 	
-	public void translate(Direction d) {
+	public void translate(Direction d, int step) {
 		switch(d) {
 		case North:
-			translate(0, -1); break;
+			translate(0, -step); break;
 		case South:
-			translate(0, 1); break;
+			translate(0, step); break;
 		case East:
-			translate(1, 0); break;
+			translate(step, 0); break;
 		default:
-			translate(-1, 0); break;
+			translate(-step, 0); break;
 		}
+	}
+	
+	public void translate(Direction d) {
+		translate(d, 1);
 	}
 	
 	public Position clone() {

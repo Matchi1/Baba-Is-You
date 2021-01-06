@@ -1,11 +1,10 @@
 package fr.umlv.bloc;
 
 import java.awt.Image;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Objects;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -14,27 +13,43 @@ import javax.swing.JLabel;
 
 import fr.umlv.board.Direction;
 import fr.umlv.board.Position;
+import fr.umlv.element.Element;
 import fr.umlv.element.ElementCategory;
 import fr.umlv.property.PropertyCategory;
 
+/**
+ * This class provides a skeletal implementation of the Bloc interface to minimize
+ * the effort required to implement this interface. 
+ *
+ */
 public abstract class AbstractBloc implements Bloc {
 	private Position pos;
 	private HashMap<PropertyCategory, Boolean> states;
 	private final ElementCategory elt;
 	private ImageIcon icon;
-	
+
 	public AbstractBloc(int x, int y, ElementCategory elt) {
 		this.pos = new Position(x, y);
 		this.elt = elt;
 		this.states = new HashMap<>();
 	}
 	
-	public void initImageIcon(String fileName) throws IOException {
-		File f = new File(fileName);
-		InputStream inputS = new FileInputStream(f);
-		Image img = ImageIO.read(inputS);
+	public AbstractBloc(Bloc bloc) {
+		this.pos = new Position(bloc.position());
+		this.elt = bloc.element();
+		this.states = new HashMap<>();
+	}
+	
+	/**
+	 * Initialize the icon field with the animated image 
+	 * with the path of the image file.
+	 * @param pathImage the path to the image file
+	 * @throws IOException
+	 */
+	public void initImageIcon(String pathImage) throws IOException {
+		Image img = ImageIO.read(new FileInputStream(pathImage));
 		JFrame imgO = new JFrame();
-        ImageIcon icon = new ImageIcon(fileName);
+        ImageIcon icon = new ImageIcon(pathImage);
         JLabel jl = new JLabel(icon);
         imgO.getContentPane().add(jl);
         imgO.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -43,53 +58,155 @@ public abstract class AbstractBloc implements Bloc {
         this.icon = icon;
 	}
 	
+	/**
+	 * Initialize the state of the bloc
+	 */
 	public void initStates() {
 		if(elt == ElementCategory.Property) {
 			putState(PropertyCategory.Push);
 		}
 	}
 	
+	/**
+	 * Returns the path to the image file
+	 * @return the path to an image file
+	 */
 	public String pathImage() {
 		return elt.pathElementCategory();
 	}
 	
+	/**
+	 * Returns the type of element this object is
+	 */
 	public ElementCategory element() {
 		return elt;
 	}
 	
+	/**
+	 * Translate the position of this object
+	 * depending on the direction.
+	 */
 	public void translate(Direction d) {
-		pos.translate(d);
+		pos.translate(Objects.requireNonNull(d));
 	}
 	
+	/**
+	 * Returns the Image of this object
+	 */
 	public ImageIcon image() {
 		return icon;
 	}
 	
+	/**
+	 * Set the image of this object
+	 */
 	public void image(ImageIcon icon) {
-		this.icon = icon;
+		this.icon = Objects.requireNonNull(icon);
 	}
 	
+	/**
+	 * Returns the position of this object
+	 */
 	public Position position() {
 		return pos.clone();
 	}
 	
+	/**
+	 * Set the position of this object
+	 */
 	public void position(int x, int y) {
 		pos.x(x);
 		pos.y(y);
 	}
 	
+	/**
+	 * Returns True if the hashmap in this objects contains
+	 * the specified element.
+	 * @param prop The specified element
+	 * @returns true if the hashmap of the states contains the specified
+	 */
 	public Boolean containState(PropertyCategory prop) {
-		if(states.get(prop) == null)
+		if(states.get(Objects.requireNonNull(prop)) == null)
 			return false;
 		return true;
 	}
 	
+	/**
+	 * Associates a true value to the specified key in the states map
+	 * @param prop the specified key
+	 */
 	public void putState(PropertyCategory prop) {
-		states.put(prop, true);
+		states.put(Objects.requireNonNull(prop), true);
 	}
 	
+	/**
+	 * removes the mappings from this specified key from states map if present
+	 * @param prop the specified key
+	 */
 	public void removeState(PropertyCategory prop) {
-		states.remove(prop);
+		states.remove(Objects.requireNonNull(prop));
+	}
+	
+	/**
+	 * Clear all of the mappings from the states map
+	 */
+	public void clearState() {
+		this.states.clear();
+	}
+	
+	/**
+	 * Returns the type of property this object is
+	 * @return None object from PropertyCategory
+	 */
+	@Override
+	public PropertyCategory property() {
+		return PropertyCategory.None;
+	}
+
+	/**
+	 * Returns the Element this object applies to
+	 * @return None object from ElementCategory
+	 */
+	@Override
+	public ElementCategory applyTo() {
+		return ElementCategory.None;
+	}
+
+	/**
+	 * Set the specified element that this object applies to
+	 * @param elt the specified element
+	 */
+	@Override
+	public void applyTo(ElementCategory elt) {
+		System.out.println("This element can't apply properties to any other element");
+	}
+	
+	/**
+	 * Returns the Element that this object represent
+	 * @return None object from ElementCategory
+	 */
+	@Override
+	public ElementCategory represent() {
+		return ElementCategory.None;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(pos, elt);
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj == null)
+			return false;
+		if(obj == this)
+			return true;
+		if(obj.getClass() != this.getClass())
+			return false;
+		Element elt = (Element) obj;
+		if(this.element() != elt.element())
+			return false;
+		return elt.position().equals(this.position());
 	}
 	
 	@Override

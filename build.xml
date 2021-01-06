@@ -1,0 +1,26 @@
+<project name="Baba">
+	<target name="clean">
+		<delete dir="classes/fr"/>
+		<delete dir="Docs/doc"/>
+		<delete file="Baba.jar"/>
+	</target>
+
+	<target name="compile">
+		<javac classpath="lib/zen5.jar" includeantruntime="false" srcdir="src" destdir="classes"/>
+	</target>
+
+	<target name="jar" depends="compile">
+		<jar destfile="Baba.jar" basedir="classes">	
+			<manifest>
+				<attribute name="Manifest-Version" value="1.0"/>
+				<attribute name="Main-Class" value="fr.umlv.main.Game"/>
+				<attribute name="Class-Path" value="lib/zen5.jar"/>
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="javadoc">
+		<mkdir dir="Docs/doc"/>
+		<javadoc sourcepath="src" classpath="lib/zen5.jar" destdir="Docs/doc"/>
+	</target>
+</project>

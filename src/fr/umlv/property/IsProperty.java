@@ -1,9 +1,8 @@
 package fr.umlv.property;
 
-import fr.umlv.bloc.Bloc;
 import fr.umlv.element.ElementCategory;
 
-public interface IsProperty extends Bloc {
+public interface IsProperty {
 	public PropertyCategory property();
 	
 	public ElementCategory applyTo();
