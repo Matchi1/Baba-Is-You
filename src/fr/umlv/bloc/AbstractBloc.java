@@ -9,10 +9,7 @@ import java.util.Objects;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 
-import fr.umlv.board.Direction;
-import fr.umlv.board.Position;
 import fr.umlv.element.Element;
 import fr.umlv.element.ElementCategory;
 import fr.umlv.property.PropertyCategory;
@@ -20,23 +17,22 @@ import fr.umlv.property.PropertyCategory;
 /**
  * This class provides a skeletal implementation of the Bloc interface to minimize
  * the effort required to implement this interface. 
- *
  */
 public abstract class AbstractBloc implements Bloc {
 	private Position pos;
 	private HashMap<PropertyCategory, Boolean> states;
-	private final ElementCategory elt;
+	private ElementCategory elt;
 	private ImageIcon icon;
 
 	public AbstractBloc(int x, int y, ElementCategory elt) {
 		this.pos = new Position(x, y);
-		this.elt = elt;
+		this.elt = Objects.requireNonNull(elt);
 		this.states = new HashMap<>();
 	}
 	
 	public AbstractBloc(Bloc bloc) {
 		this.pos = new Position(bloc.position());
-		this.elt = bloc.element();
+		this.elt = Objects.requireNonNull(bloc.element());
 		this.states = new HashMap<>();
 	}
 	
@@ -46,12 +42,10 @@ public abstract class AbstractBloc implements Bloc {
 	 * @param pathImage the path to the image file
 	 * @throws IOException
 	 */
-	public void initImageIcon(String pathImage) throws IOException {
-		Image img = ImageIO.read(new FileInputStream(pathImage));
+	public void initImageIcon() throws IOException {
+		Image img = ImageIO.read(new FileInputStream(pathImage()));
 		JFrame imgO = new JFrame();
-        ImageIcon icon = new ImageIcon(pathImage);
-        JLabel jl = new JLabel(icon);
-        imgO.getContentPane().add(jl);
+        ImageIcon icon = new ImageIcon(pathImage());
         imgO.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         icon.setImage(img);
         icon.setImageObserver(imgO);
@@ -62,9 +56,8 @@ public abstract class AbstractBloc implements Bloc {
 	 * Initialize the state of the bloc
 	 */
 	public void initStates() {
-		if(elt == ElementCategory.Property) {
+		if(elt == ElementCategory.Property) 
 			putState(PropertyCategory.Push);
-		}
 	}
 	
 	/**
@@ -80,6 +73,13 @@ public abstract class AbstractBloc implements Bloc {
 	 */
 	public ElementCategory element() {
 		return elt;
+	}
+	
+	/**
+	 * Returns the type of element this object is
+	 */
+	public void element(ElementCategory elt) {
+		this.elt = Objects.requireNonNull(elt);
 	}
 	
 	/**
@@ -126,6 +126,7 @@ public abstract class AbstractBloc implements Bloc {
 	 * @returns true if the hashmap of the states contains the specified
 	 */
 	public Boolean containState(PropertyCategory prop) {
+		Objects.requireNonNull(prop);
 		if(states.get(Objects.requireNonNull(prop)) == null)
 			return false;
 		return true;
@@ -162,24 +163,6 @@ public abstract class AbstractBloc implements Bloc {
 	public PropertyCategory property() {
 		return PropertyCategory.None;
 	}
-
-	/**
-	 * Returns the Element this object applies to
-	 * @return None object from ElementCategory
-	 */
-	@Override
-	public ElementCategory applyTo() {
-		return ElementCategory.None;
-	}
-
-	/**
-	 * Set the specified element that this object applies to
-	 * @param elt the specified element
-	 */
-	@Override
-	public void applyTo(ElementCategory elt) {
-		System.out.println("This element can't apply properties to any other element");
-	}
 	
 	/**
 	 * Returns the Element that this object represent
@@ -190,11 +173,17 @@ public abstract class AbstractBloc implements Bloc {
 		return ElementCategory.None;
 	}
 	
+	/**
+	 * Returns a hash code value for this object
+	 */
 	@Override
 	public int hashCode() {
 		return Objects.hash(pos, elt);
 	}
 	
+	/**
+	 * Indicates whether some other object is "equal to" this one.
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if(obj == null)
@@ -209,6 +198,10 @@ public abstract class AbstractBloc implements Bloc {
 		return elt.position().equals(this.position());
 	}
 	
+	/**
+	 * Returns a String representation of this object
+	 * @return a String representation of this object
+	 */
 	@Override
 	public String toString() {
 		StringBuilder str = new StringBuilder();

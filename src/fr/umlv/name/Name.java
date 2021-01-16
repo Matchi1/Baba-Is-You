@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.util.Objects;
 
 import fr.umlv.bloc.AbstractBloc;
+import fr.umlv.bloc.Bloc;
 import fr.umlv.element.ElementCategory;
+import fr.umlv.file.FileCategory;
 import fr.umlv.property.PropertyCategory;
 
 /**
@@ -14,12 +16,10 @@ import fr.umlv.property.PropertyCategory;
  */
 public class Name extends AbstractBloc {
 	private final ElementCategory rep;
-	private ElementCategory applyTo;
 	
-	private Name(int x, int y, ElementCategory rep) {
+	public Name(int x, int y, ElementCategory rep) {
 		super(x, y, ElementCategory.Name);
 		this.rep = Objects.requireNonNull(rep);
-		this.applyTo = ElementCategory.None;
 	}
 	
 	public String pathImage() {
@@ -41,10 +41,24 @@ public class Name extends AbstractBloc {
 	public static Name createName(int x, int y, ElementCategory rep) throws IOException {
 		Objects.requireNonNull(rep);
 		Name newName = new Name(x, y, rep);
-		String fileImage = newName.pathImage();
 		newName.putState(PropertyCategory.Push);
-		newName.initImageIcon(fileImage);
+		newName.initImageIcon();
 		return newName;
+	}
+	
+	public static Bloc createName(String[] parts) {
+		Bloc elt = null;
+		try {
+			elt = Name.createName(Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), 
+            		ElementCategory.convertStr(FileCategory.convertSymbolToName(parts[3])));
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return elt;
 	}
 	
 	/**
@@ -54,23 +68,5 @@ public class Name extends AbstractBloc {
 	@Override
 	public ElementCategory represent() {
 		return this.rep;
-	}
-	
-	/**
-	 * Returns the element this object applies to
-	 * @return an ElementCategory object 
-	 */
-	@Override
-	public ElementCategory applyTo() {
-		return this.applyTo;
-	}
-
-	/**
-	 * Set the specified element object that this object applies to
-	 * @param elt the specified element
-	 */
-	@Override
-	public void applyTo(ElementCategory elt) {
-		this.applyTo = elt;
 	}
 }

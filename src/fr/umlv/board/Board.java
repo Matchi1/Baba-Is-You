@@ -8,11 +8,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.swing.ImageIcon;
 
 import fr.umlv.bloc.Bloc;
-import fr.umlv.property.PropertyCategory;
+import fr.umlv.bloc.Position;
 import fr.umlv.zen5.ApplicationContext;
 
 /**
@@ -77,6 +78,10 @@ public class Board {
 		return board.get(pos);
 	}
 	
+	public Set<Position> positionSet(){
+		return board.keySet();
+	}
+	
 	/**
 	 * Append a bloc into the ArrayList in the specified position
 	 * @param x position in the board in the X axis
@@ -84,6 +89,7 @@ public class Board {
 	 * @param bloc a Bloc
 	 */
 	public void addBloc(int x, int y, Bloc bloc) {
+		Objects.requireNonNull(bloc);
 		var pos = new Position(x, y);
 		if(outsideBoard(pos))
 			throw new IllegalArgumentException("Position have to be between 0 and the length of the board");
@@ -106,33 +112,6 @@ public class Board {
 			set = board.get(pos);
 		}
 		set.add(Objects.requireNonNull(bloc));
-	}
-	
-	/**
-	 * Removes the specified object from the ArrayList in the specified position
-	 * of the board
-	 * @param x position in the board in the X axis
-	 * @param y position in the board in the Y axis
-	 * @param bloc a Bloc object
-	 */
-	public void removeBloc(int x, int y, Bloc bloc) {
-		if(outsideBoard(x, y))
-			throw new IllegalArgumentException("Position have to be between 0 and the length of the board");
-		removeBloc(new Position(x, y), bloc);
-	}
-	
-	/**
-	 * Removes the specified object from the ArrayList in the specified position
-	 * of the board
-	 * @param x position in the board in the X axis
-	 * @param y position in the board in the Y axis
-	 * @param bloc a Bloc object
-	 */
-	public void removeBloc(Position pos, Bloc bloc) {
-		if(outsideBoard(pos))
-			throw new IllegalArgumentException("Position have to be between 0 and the length of the board");
-		var set = board.get(pos);
-		set.remove(bloc);
 	}
 	
 	/**
@@ -159,7 +138,7 @@ public class Board {
 	 * @param lenX length of the board in the X axis
 	 * @param lenY length of the board in the Y axis
 	 */
-	public void initRectangle(int screenWidth, int screenHeight, int lenX, int lenY) {
+	private void initRectangle(int screenWidth, int screenHeight, int lenX, int lenY) {
 		if(screenWidth <= 0 || screenHeight <= 0 || lenX <= 0 || lenY <= 0)
 			throw new IllegalArgumentException("Lengths have to be greater than 0");
 		int width = (screenWidth - lengthBloc * length.x()) / 2;
@@ -197,26 +176,6 @@ public class Board {
 	}
 	
 	/**
-	 * Verify if the next position of an element in the board
-	 * is legal or not
-	 * @param pos the position of an element
-	 * @return true if it is legal elese false
-	 */
-	public boolean isLegal(Position pos) {
-		if(outsideBoard(pos))
-			return false;
-		var currentBloc = board.get(pos);
-		if(currentBloc != null) {
-			for(var bloc : currentBloc) {
-				if(bloc.containState(PropertyCategory.Stop)) {
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-	
-	/**
 	 * Refresh all of the element contained in the board field
 	 */
 	public void refresh() {
@@ -234,23 +193,47 @@ public class Board {
 				}
 			}
 		}
-		for(var elt : lstElement) {
+		for(var elt : lstElement) 
 			addBloc(elt.position(), elt);
-		} 
+		removeEmptyPosition();
 	}
 	
-	
-	
+	/**
+	 * Remove the specified bloc element from this board
+	 * @param bloc the specified bloc 
+	 */
 	public void remove(Bloc bloc) {
+		Objects.requireNonNull(bloc);
 		for(var group : board.values()) {
 			if(group.contains(bloc))
 				group.remove(bloc);
 		}
 	}
 	
+	/**
+	 * Remove the specified position from this board
+	 * @param pos the specified position
+	 */
 	public void removePos(Position pos) {
 		Objects.requireNonNull(pos);
-		board.remove(pos);
+		var it = board.get(pos).iterator();
+		while(it.hasNext()) {
+			it.next();
+			it.remove();
+		}
+	}
+	
+	/**
+	 * Remove all the empty position from this board
+	 */
+	public void removeEmptyPosition() {
+		var garbage = new ArrayList<>();
+		for(var it : board.entrySet()) {
+			if(it.getValue().isEmpty())
+				garbage.add(it.getKey());
+		}
+		for(var elt : garbage)
+			board.remove(elt);
 	}
 	
 	/**
@@ -275,6 +258,9 @@ public class Board {
 		return outsideBoard(pos.x(), pos.y());
 	}
 	
+	/**
+	 * Display the String representation of this board
+	 */
 	public void displayBoard() {
 		for(var pos : board.keySet()) {
 			System.out.print(pos + " : ");

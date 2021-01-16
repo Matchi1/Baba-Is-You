@@ -4,7 +4,8 @@ import java.io.IOException;
 import java.util.Objects;
 
 import fr.umlv.bloc.AbstractBloc;
-import fr.umlv.property.PropertyCategory;
+import fr.umlv.bloc.Bloc;
+import fr.umlv.file.FileCategory;
 
 /**
  * This class provides an implementation of the AbstractBloc class.
@@ -30,8 +31,28 @@ public class Element extends AbstractBloc {
 	public static Element createElement(int x, int y, ElementCategory elt) throws IOException {
 		Objects.requireNonNull(elt);
 		Element element = new Element(x, y, elt);
-		String fileImage = element.pathImage();
-		element.initImageIcon(fileImage);
+		element.initImageIcon();
 		return element;
+	}
+	
+	/**
+	 * Create an Element type with the specified array
+	 * @param parts the specified array
+	 * @return The create Element
+	 */
+	public static Bloc createElement(String[] parts) {
+		Objects.requireNonNull(parts);
+		Bloc elt = null;
+		try {
+			elt = Element.createElement(Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), 
+					ElementCategory.convertStr(FileCategory.convertSymbolToName(parts[3])));
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return elt;
 	}
 }

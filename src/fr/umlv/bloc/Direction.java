@@ -1,10 +1,17 @@
-package fr.umlv.board;
+package fr.umlv.bloc;
 
 import fr.umlv.zen5.KeyboardKey;
 
+/**
+ * Enum that represents a direction
+ */
 public enum Direction {
 	North, South, West, East;
 	
+	/**
+	 * Return the opposite direction of this object
+	 * @return Return the opposite direction of this object
+	 */
 	public Direction contrary() {
 		switch(this) {
 		case North: return South;
@@ -14,6 +21,11 @@ public enum Direction {
 		}
 	}
 	
+	/**
+	 * Convert the directional key into a Direction
+	 * @param k the directional key
+	 * @return the Direction representing the key
+	 */
 	public static Direction convertKeyboardKeyToDirection(KeyboardKey k) {
 		switch(k) {
 		case UP: return North;
@@ -23,6 +35,9 @@ public enum Direction {
 		}
 	}
 	
+	/**
+	 * Returns a String representation of this Direction
+	 */
 	@Override
 	public String toString() {
 		switch(this) {

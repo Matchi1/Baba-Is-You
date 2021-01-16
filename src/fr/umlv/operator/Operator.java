@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.util.Objects;
 
 import fr.umlv.bloc.AbstractBloc;
+import fr.umlv.bloc.Bloc;
 import fr.umlv.element.ElementCategory;
+import fr.umlv.file.FileCategory;
 import fr.umlv.property.PropertyCategory;
 
 /**
@@ -14,7 +16,7 @@ import fr.umlv.property.PropertyCategory;
  */
 public class Operator extends AbstractBloc {
 	private OperatorCategory op;
-	private ElementCategory applyTo;
+	
 	private Operator(int x, int y, OperatorCategory op) {
 		super(x, y, ElementCategory.Operator);
 		this.op = Objects.requireNonNull(op);
@@ -39,19 +41,29 @@ public class Operator extends AbstractBloc {
 	public static Operator createOperator(int x, int y, OperatorCategory op) throws IOException {
 		Objects.requireNonNull(op);
 		Operator newOp = new Operator(x, y, op);
-		String fileImage = newOp.pathImage();
 		newOp.putState(PropertyCategory.Push);
-		newOp.initImageIcon(fileImage);
+		newOp.initImageIcon();
 		return newOp;
 	}
-
-	@Override
-	public ElementCategory applyTo() {
-		return applyTo;
-	}
-
-	@Override
-	public void applyTo(ElementCategory elt) {
-		this.applyTo = elt;
+	
+	/**
+	 * Create an Operator type with the specified array
+	 * @param parts the specified array
+	 * @return The create Operator
+	 */
+	public static Bloc createOperator(String[] parts) {
+		Objects.requireNonNull(parts);
+		Bloc elt = null;
+		try {
+			elt = Operator.createOperator(Integer.parseInt(parts[1]), Integer.parseInt(parts[2]),
+            		OperatorCategory.convertStr(FileCategory.convertSymbolToName(parts[3])));
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return elt;
 	}
 }
