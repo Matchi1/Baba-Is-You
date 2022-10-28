@@ -23,6 +23,7 @@ import fr.umlv.zen5.ScreenInfo;
  *
  */
 public class Game {
+
 	/**
 	 * Initialize the background of the window according to the specified context, 
 	 * width and height
